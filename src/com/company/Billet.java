@@ -12,6 +12,11 @@ public class Billet {
         this.billetsStock = new HashMap<String, Integer>();
     }
 
+    public Billet(HashMap<String, Integer> billetsStock) {
+        // Initialisation du dictionnaire
+        this.billetsStock = billetsStock;
+    }
+
     // Méthode pour ajouter des billets de type donné
     public void ajouterBillets(String type, int nombre) {
         if (billetsStock.containsKey(type)) {
@@ -49,7 +54,7 @@ public class Billet {
     }
 
     // Méthode pour obtenir le nombre de billets de type donné
-    public int obtenirNombreBillets(String type) {
+    public int getBilletsRestants(String type) {
         if (billetsStock.containsKey(type)) {
             // Si le type de billet existe, on retourne le nombre de billets
             return billetsStock.get(type);
@@ -57,5 +62,13 @@ public class Billet {
             // Si le type de billet n'existe pas, on retourne 0
             return 0;
         }
+    }
+
+    // Methode pour remplir le stock de billets d'un type donné
+    public void remplirBillets(String type, int nombre, String filePath) {
+        // On ajoute le nombre de billets donné
+        ajouterBillets(type, nombre);
+        // On écrit le nouveau nombre de billets dans le fichier CSV
+        CSVUtils.writeBilletsRestants(billetsStock, filePath);
     }
 }

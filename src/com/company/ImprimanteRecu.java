@@ -11,10 +11,6 @@ public class ImprimanteRecu {
         return papierRestant;
     }
 
-    public void remplacerPapier(int nouveauPapier) {
-        this.papierRestant = nouveauPapier;
-    }
-
     public void imprimerRecu(String contenu) {
         if (papierRestant > 0) {
             System.out.println("Imprimant le reçu: " + contenu);
@@ -25,8 +21,9 @@ public class ImprimanteRecu {
     }
 
     public void remplirPapiers(Integer nbPapiers, String filePath) {
-        papierRestant += nbPapiers;
-        CSVUtils.writePapiersRestants(papierRestant, filePath);
+        Integer newPapierRestant = papierRestant + nbPapiers;
+        System.out.println("Nouveau papier restant: " + newPapierRestant);
+        CSVUtils.writePapiersRestants(newPapierRestant, filePath);
 
     }
 }

@@ -1,4 +1,5 @@
 package com.company;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -43,25 +44,52 @@ public class Main {
         // Si c'est un gérant
         if (utilisateur.getEstGerant()) {
             System.out.println("Bonjour gérant, que voulez-vous faire ?");
-            System.out.println("1. Remplir les billets");
-            System.out.println("2. Remplir les papiers pour reçus");
-            int choix = scanner.nextInt();
-            if (choix == 1) {
-                System.out.println("Combien de billets voulez-vous ajouter ?");
-                int nbBillets = scanner.nextInt();
-                System.out.println("Quel billet voulez-vous ajouter ?");
-                System.out.println("1. 5$");
-                System.out.println("2. 10$");
-                System.out.println("3. 20$");
-                System.out.println("4. 50$");
-                System.out.println("5. 100$");
-                int typeBillet = scanner.nextInt();
+            while (true) {
+                System.out.println("1. Remplir les billets");
+                System.out.println("2. Remplir les papiers pour reçus");
+                System.out.println("3. Quitter");
+                int choix = scanner.nextInt();
+                switch (choix) {
+                    case 1:
+                        System.out.println("Combien de billets voulez-vous ajouter ?");
+                        int nbBillets = scanner.nextInt();
+                        System.out.println("Quel billet voulez-vous ajouter ?");
+                        System.out.println("1. 5$");
+                        System.out.println("2. 10$");
+                        System.out.println("3. 20$");
+                        System.out.println("4. 50$");
+                        System.out.println("5. 100$");
+                        switch(scanner.nextInt()) {
+                            case 1:
+                                remplirBillets(5, nbBillets);
+                                break;
+                            case 2:
+                                remplirBillets(10, nbBillets);
+                                break;
+                            case 3:
+                                remplirBillets(20, nbBillets);
+                                break;
+                            case 4:
+                                remplirBillets(50, nbBillets);
+                                break;
+                            case 5:
+                                remplirBillets(100, nbBillets);
+                                break;
+                            default:
+                                System.out.println("Choix invalide, veuillez réessayer.");
+                        }
+                        break;
+                    case 2:
+                        System.out.println("Combien de papiers voulez-vous ajouter ?");
+                        int nbPapiers = scanner.nextInt();
+                        remplirPapiersReçus(nbPapiers, "src/papiersRecus.csv");
+                        break;
+                    case 3:
+                        return;
+                    default:
+                        System.out.println("Choix invalide, veuillez réessayer.");
 
-                remplirBillets(typeBillet, nbBillets);
-            } else if (choix == 2) {
-                System.out.println("Combien de papiers voulez-vous ajouter ?");
-                int nbPapiers = scanner.nextInt();
-                remplirPapiersReçus(nbPapiers, "src/papiersRecus.csv");
+                }
             }
         } else {
             System.out.println("Bonjour, que voulez-vous faire ?");
@@ -77,12 +105,17 @@ public class Main {
     }
 
     private static void remplirPapiersReçus(Integer nbPapiers, String filePath) {
-        ImprimanteRecu imprimanteRecu = new ImprimanteRecu(nbPapiers);
+        int ancienPapierRestant = CSVUtils.getPapiersRecusRestants("src/papiersRecus.csv");
+        ImprimanteRecu imprimanteRecu = new ImprimanteRecu(ancienPapierRestant);
         imprimanteRecu.remplirPapiers(nbPapiers, filePath);
 
     }
 
     private static void remplirBillets(Integer typeBillet, Integer nbBillets) {
+        Billet billet = new Billet((HashMap<String, Integer>) CSVUtils.getBilletsRestants("src/billets.csv"));
+        int ancienBilletsRestant = billet.getBilletsRestants(String.valueOf(typeBillet));
+        billet.remplirBillets(String.valueOf(typeBillet), nbBillets, "src/billets.csv");
+
     }
 
     private static Utilisateur verifierUtilisateur(String numCarte, String codeSecret, List<Compte> comptes, List<Carte> cartes) {
@@ -108,6 +141,42 @@ public class Main {
 
     private static void gererChoixUtilisateur(int choix, Scanner scanner, Utilisateur utilisateur, int papiersReçusRestants) {
         System.out.println("Choix: " + choix);
+        switch (choix){
+            case 1:
+                System.out.println("Combien voulez-vous retirer?");
+                int montant = scanner.nextInt();
+                utilisateur.getCompte().retirer(montant, utilisateur.getCarte(), papiersReçusRestants);
+                break;
+            case 2:
+                System.out.println("Combien voulez-vous déposer?");
+                int montantDepot = scanner.nextInt();
+                utilisateur.getCompte().deposer(montantDepot, utilisateur.getCarte(), papiersReçusRestants);
+                break;
+            case 3:
+                System.out.println("Quel est le numéro de compte du destinataire?");
+                String numeroDeCompte = scanner.nextLine();
+                System.out.println("Quel est le montant à payer?");
+                int montantPayer = scanner.nextInt();
+                utilisateur.getCompte().payerFacture(numeroDeCompte, montantPayer, utilisateur.getCarte(), papiersReçusRestants);
+                break;
+            case 4:
+                System.out.println("Quel est le numéro de compte du destinataire?");
+                String numeroDeCompteDestinataire = scanner.nextLine();
+                System.out.println("Quel est le montant à transférer?");
+                int montantTransfert = scanner.nextInt();
+                utilisateur.getCompte().(numeroDeCompteDestinataire, montantTransfert, utilisateur.getCarte(), papiersReçusRestants);
+                break;
+            case 5:
+                System.out.println("Veuillez entrer votre nouveau code secret : ");
+                String nouveauCodeSecret = scanner.nextLine();
+                utilisateur.getCarte().changerCodeSecret(nouveauCodeSecret);
+                break;
+            case 6:
+                utilisateur.getCompte().imprimerLivretBanque();
+                break;
+            default:
+                System.out.println("Choix invalide, veuillez réessayer.");
+        }
     }
 }
 

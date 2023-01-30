@@ -1,8 +1,6 @@
 package com.company;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,8 +101,44 @@ public class CSVUtils {
         return cartes;
     }
 
-    public static void writePapiersRestants(int papiersRestants, String filePath) {
+    public static void writePapiersRestants(int newPapierRestant, String filePath) {
+        System.out.println("Writing new papiers restants to file: " + newPapierRestant);
         // Réécris le fichier avec le nouveau nombre de papiers restants tout en ne changeant pas la premiere ligne
+        // Skip the first line (header)
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line = br.readLine();
+            // Write the new line
+            try(BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+                bw.write(line);
+                bw.newLine();
+                bw.write(String.valueOf(newPapierRestant));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+
+    }
+
+    public static void writeBilletsRestants(HashMap<String, Integer> billetsStock, String filePath) {
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line = br.readLine();
+            // Write the new line
+            try(BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+                bw.write(line);
+                bw.newLine();
+                for (Map.Entry<String, Integer> entry : billetsStock.entrySet()) {
+                    System.out.println(entry.getKey() + " $CAD " + entry.getValue());
+                    bw.write(entry.getKey() + "," + entry.getValue());
+                    bw.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
