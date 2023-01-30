@@ -93,6 +93,7 @@ public class CSVUtils {
                 // Use comma as separator
                 String[] carte = line.split(cvsSplitBy);
                 // Format du fichier CSV: Numero, Code, Date, Solde, Type, Compte
+                System.out.println(carte[0] + " " + carte[1] + " " + carte[2] + " " + carte[3] + " " + carte[4] + " " + carte[5]);
                 cartes.add(new Carte(carte[0], carte[1], carte[2], carte[3], carte[4], carte[5]));
 
             }
@@ -100,5 +101,10 @@ public class CSVUtils {
             e.printStackTrace();
         }
         return cartes;
+    }
+
+    public static void writePapiersRestants(int papiersRestants, String filePath) {
+        // Réécris le fichier avec le nouveau nombre de papiers restants tout en ne changeant pas la premiere ligne
+
     }
 }

@@ -33,7 +33,7 @@ public class Carte {
         return typeDeCarte;
     }
 
-    public Integer getNumeroDeCompte() {
-        return Integer.parseInt(compte);
+    public Long getNumeroDeCompte() {
+        return Long.parseLong(compte);
     }
 }

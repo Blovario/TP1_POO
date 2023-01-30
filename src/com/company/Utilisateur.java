@@ -13,6 +13,15 @@ public class Utilisateur {
         this.compte = compte;
     }
 
+    public Utilisateur(Compte compte, Carte carte) {
+        this.compte = compte;
+        this.carte = carte;
+        // Get the name of the user from compte.getTitulaireDuCompte()
+        String[] nomPrenom = compte.getTitulaireDuCompte().split(" ");
+        this.nom = nomPrenom[0];
+        this.prenom = nomPrenom[1];
+    }
+
     public String getNom() {
         return nom;
     }

@@ -25,11 +25,9 @@ public class Compte {
         return solde;
     }
 
-    public String obtenirNumeroDeCompte() {
-        return numeroDeCompte;
-    }
 
-    public String obtenirTitulaireDuCompte() {
+
+    public String getTitulaireDuCompte() {
         return titulaireDuCompte;
     }
 

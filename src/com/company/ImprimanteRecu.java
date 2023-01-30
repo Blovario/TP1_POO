@@ -23,5 +23,11 @@ public class ImprimanteRecu {
             System.out.println("Impossible d'imprimer, pas de papier disponible.");
         }
     }
+
+    public void remplirPapiers(Integer nbPapiers, String filePath) {
+        papierRestant += nbPapiers;
+        CSVUtils.writePapiersRestants(papierRestant, filePath);
+
+    }
 }
 

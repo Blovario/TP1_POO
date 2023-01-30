@@ -39,6 +39,7 @@ public class Main {
             return;
         }
 
+        System.out.println("Bonjour " + utilisateur.getPrenom() + " " + utilisateur.getNom() + ", que voulez-vous faire ?");
         // Si c'est un gérant
         if (utilisateur.getEstGerant()) {
             System.out.println("Bonjour gérant, que voulez-vous faire ?");
@@ -58,7 +59,9 @@ public class Main {
 
                 remplirBillets(typeBillet, nbBillets);
             } else if (choix == 2) {
-                remplirPapiersReçus();
+                System.out.println("Combien de papiers voulez-vous ajouter ?");
+                int nbPapiers = scanner.nextInt();
+                remplirPapiersReçus(nbPapiers, "src/papiersRecus.csv");
             }
         } else {
             System.out.println("Bonjour, que voulez-vous faire ?");
@@ -73,7 +76,10 @@ public class Main {
         }
     }
 
-    private static void remplirPapiersReçus() {
+    private static void remplirPapiersReçus(Integer nbPapiers, String filePath) {
+        ImprimanteRecu imprimanteRecu = new ImprimanteRecu(nbPapiers);
+        imprimanteRecu.remplirPapiers(nbPapiers, filePath);
+
     }
 
     private static void remplirBillets(Integer typeBillet, Integer nbBillets) {
