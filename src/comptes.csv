@@ -1,0 +1,4 @@
+numeroDeCompte, titulaire, solde, estGerant
+1,Dupont Jean,1000,true
+2,Durand Paul,2000,false
+3,Martin Marie,3000,false
