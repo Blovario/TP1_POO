@@ -1,4 +1,4 @@
 NumeroDeCarte,CodeSecret,DateExpiration,Solde,Type, Compte
 2352563,9898,01/01/2028,1111,Visa,1
 3523244,9898,01/01/2024,3442,Visa,1
-5764583,9898,01/01/2038,53253,MasterCard,1
+5764583,9,01/01/2038,53253,MasterCard,2

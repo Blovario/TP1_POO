@@ -82,7 +82,7 @@ public class Main {
                     case 2:
                         System.out.println("Combien de papiers voulez-vous ajouter ?");
                         int nbPapiers = scanner.nextInt();
-                        remplirPapiersReçus(nbPapiers, "src/papiersRecus.csv");
+                        remplirPapiersRecus(nbPapiers, "src/papiersRecus.csv");
                         break;
                     case 3:
                         return;
@@ -92,19 +92,32 @@ public class Main {
                 }
             }
         } else {
-            System.out.println("Bonjour, que voulez-vous faire ?");
-            System.out.println("1. Retirer de l'argent");
-            System.out.println("2. Déposer de l'argent");
-            System.out.println("3. Payer une facture");
-            System.out.println("4. Transférer de l'argent entre comptes");
-            System.out.println("5. Changer votre code secret");
-            System.out.println("6. Imprimer votre livret de banque");
-            int choix = scanner.nextInt();
-            gererChoixUtilisateur(choix, scanner, utilisateur, papiersRecusRestants);
+            Boolean aChoisi = false;
+            while(true) {
+                System.out.println("Bonjour, que voulez-vous faire ?");
+                System.out.println("1. Retirer de l'argent");
+                System.out.println("2. Déposer de l'argent");
+                System.out.println("3. Payer une facture");
+                System.out.println("4. Transférer de l'argent entre comptes");
+                System.out.println("5. Changer votre code secret");
+                System.out.println("6. Imprimer votre livret de banque");
+                System.out.println("7. Quitter");
+                int choix = scanner.nextInt();
+                aChoisi = gererChoixUtilisateur(choix, scanner, utilisateur, papiersRecusRestants);
+                if(aChoisi){
+                    System.out.println("Voulez-vous un reçu? (O/N)");
+                    String reponse = scanner.next();
+                    if (reponse.equals("O")) {
+                        imprimanteRecu.imprimerRecu("Reçu de " + utilisateur.getPrenom() + " " + utilisateur.getNom());
+                    }
+                }
+            }
+
+
         }
     }
 
-    private static void remplirPapiersReçus(Integer nbPapiers, String filePath) {
+    private static void remplirPapiersRecus(Integer nbPapiers, String filePath) {
         int ancienPapierRestant = CSVUtils.getPapiersRecusRestants("src/papiersRecus.csv");
         ImprimanteRecu imprimanteRecu = new ImprimanteRecu(ancienPapierRestant);
         imprimanteRecu.remplirPapiers(nbPapiers, filePath);
@@ -139,44 +152,101 @@ public class Main {
     }
 
 
-    private static void gererChoixUtilisateur(int choix, Scanner scanner, Utilisateur utilisateur, int papiersReçusRestants) {
-        System.out.println("Choix: " + choix);
+    private static Boolean gererChoixUtilisateur(int choix, Scanner scanner, Utilisateur utilisateur, int papiersReçusRestants) {
         switch (choix){
             case 1:
                 System.out.println("Combien voulez-vous retirer?");
+                System.out.println("1. 5$");
+                System.out.println("2. 10$");
+                System.out.println("3. 20$");
+                System.out.println("4. 50$");
+                System.out.println("5. 100$");
                 int montant = scanner.nextInt();
-                utilisateur.getCompte().retirer(montant, utilisateur.getCarte(), papiersReçusRestants);
+                while(montant < 1 || montant > 5){
+                    System.out.println("Choix invalide, veuillez réessayer.");
+                    montant = scanner.nextInt();
+                }
+                switch (montant) {
+                    case 1:
+                        montant = 5;
+                        break;
+                    case 2:
+                        montant = 10;
+                        break;
+                    case 3:
+                        montant = 20;
+                        break;
+                    case 4:
+                        montant = 50;
+                        break;
+                    case 5:
+                        montant = 100;
+                        break;
+                    default:
+                        System.out.println("Choix invalide, veuillez réessayer.");
+                }
+                if(utilisateur.getCompte().retirer(montant)){
+                    System.out.println("Retrait effectué avec succès.");
+                    return true;
+                } else {
+                    System.out.println("Retrait échoué.");
+                }
                 break;
             case 2:
                 System.out.println("Combien voulez-vous déposer?");
                 int montantDepot = scanner.nextInt();
-                utilisateur.getCompte().deposer(montantDepot, utilisateur.getCarte(), papiersReçusRestants);
+                if(utilisateur.getCompte().deposer(montantDepot)){
+                    System.out.println("Dépôt effectué avec succès.");
+                    return true;
+                } else {
+                    System.out.println("Dépôt échoué.");
+                }
                 break;
             case 3:
-                System.out.println("Quel est le numéro de compte du destinataire?");
-                String numeroDeCompte = scanner.nextLine();
-                System.out.println("Quel est le montant à payer?");
-                int montantPayer = scanner.nextInt();
-                utilisateur.getCompte().payerFacture(numeroDeCompte, montantPayer, utilisateur.getCarte(), papiersReçusRestants);
+                System.out.println("Quel est la référence de la facture?");
+                Long referenceFacture = scanner.nextLong();
+                System.out.println("Quel est le montant de la facture?");
+                Double montantFacture = scanner.nextDouble();
+                if(utilisateur.getCompte().payerFacture(String.valueOf(referenceFacture), montantFacture)){
+                    System.out.println("Paiement effectué avec succès.");
+                    return true;
+                } else {
+                    System.out.println("Paiement échoué.");
+                }
                 break;
             case 4:
                 System.out.println("Quel est le numéro de compte du destinataire?");
-                String numeroDeCompteDestinataire = scanner.nextLine();
+                Integer numeroDeCompteDestinataire = scanner.nextInt();
                 System.out.println("Quel est le montant à transférer?");
                 int montantTransfert = scanner.nextInt();
-                utilisateur.getCompte().(numeroDeCompteDestinataire, montantTransfert, utilisateur.getCarte(), papiersReçusRestants);
+                if(utilisateur.getCompte().transfertArgent(String.valueOf(numeroDeCompteDestinataire), montantTransfert,"src/comptes.csv")){
+                    System.out.println("Transfert effectué avec succès.");
+                    return true;
+                } else {
+                    System.out.println("Transfert échoué.");
+                }
+
                 break;
             case 5:
                 System.out.println("Veuillez entrer votre nouveau code secret : ");
-                String nouveauCodeSecret = scanner.nextLine();
-                utilisateur.getCarte().changerCodeSecret(nouveauCodeSecret);
+                Integer nouveauCodeSecret = scanner.nextInt();
+                if(utilisateur.getCarte().setCodeSecret(String.valueOf(nouveauCodeSecret))){
+                    System.out.println("Code secret modifié avec succès.");
+                    return true;
+                } else {
+                    System.out.println("Code secret non modifié.");
+                }
+
                 break;
             case 6:
                 utilisateur.getCompte().imprimerLivretBanque();
                 break;
+            case 7:
+                System.exit(0);
             default:
                 System.out.println("Choix invalide, veuillez réessayer.");
         }
+        return false;
     }
 }
 

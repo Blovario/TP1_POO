@@ -1,6 +1,8 @@
 package com.company;
 
 public class Compte {
+
+
     private double solde;
     private String numeroDeCompte;
     private String titulaireDuCompte;
@@ -21,18 +23,15 @@ public class Compte {
         this.estGerant = Boolean.parseBoolean(estGerant);
     }
 
-    public double obtenirSolde() {
-        return solde;
-    }
-
-
 
     public String getTitulaireDuCompte() {
         return titulaireDuCompte;
     }
 
-    public void deposer(double montant) {
+    public boolean deposer(double montant) {
         solde += montant;
+        writeNewCompteFile("src/comptes.csv");
+        return true;
     }
 
     public boolean retirer(double montant) {
@@ -40,6 +39,7 @@ public class Compte {
             return false;
         } else {
             solde -= montant;
+            writeNewCompteFile("src/comptes.csv");
             return true;
         }
     }
@@ -49,8 +49,46 @@ public class Compte {
         return estGerant;
     }
 
+    public double getSolde() {
+        return solde;
+    }
+
+    public void setSolde(double solde) {
+        this.solde = solde;
+    }
+
     public Long getNumeroDeCompte() {
         return Long.parseLong(numeroDeCompte);
+    }
+
+    private void writeNewCompteFile(String filePath) {
+        CSVUtils.writeCompte(this, filePath);
+    }
+
+    public Boolean transfertArgent(String numeroDeCompteDestinataire, int montantTransfert, String filePath) {
+        Compte compteDestinataire = CSVUtils.getCompteByNumeroDeCompte(numeroDeCompteDestinataire, filePath);
+        if (compteDestinataire != null) {
+            if (this.retirer(montantTransfert)) {
+                compteDestinataire.deposer(montantTransfert);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void imprimerLivretBanque() {
+        System.out.println("Titulaire du compte: " + titulaireDuCompte);
+        System.out.println("Numéro de compte: " + numeroDeCompte);
+        System.out.println("Solde: " + solde);
+    }
+
+    public boolean payerFacture(String referenceFacture, Double montantFacture) {
+        if (this.retirer(montantFacture)) {
+            CSVUtils.writeFacture(referenceFacture, montantFacture, "src/factures.csv");
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

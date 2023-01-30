@@ -36,4 +36,10 @@ public class Carte {
     public Long getNumeroDeCompte() {
         return Long.parseLong(compte);
     }
+
+    public Boolean setCodeSecret(String nouveauCodeSecret) {
+        codeSecret = nouveauCodeSecret;
+        CSVUtils.writeNewCarteFile(codeSecret, numeroDeCarte, "src/cartes.csv");
+        return true;
+    }
 }
